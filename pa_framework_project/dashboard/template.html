@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>People Analytics: Kinerja Juru Ketik</title>
+<style>
+:root{--bg:#f4f5f8;--cd:#fff;--tx:#1b2333;--mu:#667085;--ac:#2563eb;--a2:#f59e0b;--a3:#10b981;--bd:#e4e7ec;--bad:#dc2626;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d1220;--cd:#171f33;--tx:#e8ecf5;--mu:#98a2b8;--ac:#60a5fa;--a2:#fbbf24;--a3:#34d399;--bd:#2a3550;--bad:#f87171}}
+:root[data-theme=dark]{--bg:#0d1220;--cd:#171f33;--tx:#e8ecf5;--mu:#98a2b8;--ac:#60a5fa;--a2:#fbbf24;--a3:#34d399;--bd:#2a3550;--bad:#f87171}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#0ea5e9);color:#fff;padding:22px 16px 56px}header div,main{max-width:1180px;margin:auto}
+h1{font-size:1.45rem;margin:0}header p{margin:4px 0 0;opacity:.85;font-size:.85rem}main{padding:0 16px 40px;margin-top:-36px}
+nav{display:flex;gap:6px;overflow-x:auto;margin:14px 0}nav button{border:1px solid var(--bd);background:var(--cd);color:var(--tx);padding:7px 14px;border-radius:99px;cursor:pointer;white-space:nowrap;font:inherit}nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.g{display:grid;gap:12px}.k{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.w{grid-template-columns:repeat(auto-fit,minmax(340px,1fr));margin-top:12px}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}.c .l{color:var(--mu);font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}.c .v{font-size:1.65rem;font-weight:700}.c .s{color:var(--mu);font-size:.75rem}
+h2{font-size:.98rem;margin:0 0 2px}.n{color:var(--mu);font-size:.78rem;margin:0 0 8px}.b{position:relative;height:270px}.ov{overflow-x:auto;max-height:420px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:.82rem}th,td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:var(--mu);position:sticky;top:0;background:var(--cd);cursor:pointer}
+.bad{color:var(--bad);font-weight:600}.ok{color:var(--a3);font-weight:600}.p{display:none}.p.on{display:block}.ctl{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:8px;font-size:.82rem}.ctl input[type=text]{padding:5px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+ul{margin:6px 0 0;padding-left:18px}li{margin:4px 0}.foot{color:var(--mu);font-size:.75rem;margin-top:16px}
+</style></head><body>
+<header><div><h1>People Analytics: Kinerja Juru Ketik</h1><p id="hs"></p></div></header>
+<main>
+<div class="g k" id="kpi"></div>
+<nav id="nav"></nav>
+<section class="p" id="p0"><div class="c"><h2>Temuan utama</h2><ul id="ins"></ul></div>
+<div class="g w"><div class="c"><h2>Tren rating bulanan</h2><p class="n">Rata-rata rating dan jumlah penilaian</p><div class="b"><canvas id="a1"></canvas></div></div>
+<div class="c"><h2>Distribusi rating</h2><p class="n">Persentase penilaian per skor</p><div class="b"><canvas id="a2"></canvas></div></div></div></section>
+<section class="p" id="p1"><div class="g w"><div class="c"><h2>Kualitas bulanan</h2><p class="n">% rating 5 dan % penilaian memuat kesalahan</p><div class="b"><canvas id="b1"></canvas></div></div>
+<div class="c"><h2>Rating menurut pengalaman</h2><p class="n">Dikelompokkan dari jumlah tulisan yang sudah dinilai</p><div class="b"><canvas id="b2"></canvas></div></div>
+<div class="c"><h2>Pola jam penilaian</h2><p class="n">Jumlah penilaian (batang) dan rata-rata rating (garis) per jam</p><div class="b"><canvas id="b3"></canvas></div></div>
+<div class="c"><h2>Pola hari penilaian</h2><p class="n">Senin sampai Minggu</p><div class="b"><canvas id="b4"></canvas></div></div></div></section>
+<section class="p" id="p2"><div class="g w"><div class="c"><h2>Volume vs rating</h2><p class="n">Warna menurut klaster</p><div class="b"><canvas id="c1"></canvas></div></div>
+<div class="c"><h2>Sebaran rata-rata rating juru ketik</h2><p class="n">Jumlah juru ketik per rentang rating</p><div class="b"><canvas id="c2"></canvas></div></div></div>
+<div class="c" style="margin-top:12px"><h2>Tabel juru ketik</h2><div class="ctl"><input type="text" id="q" placeholder="Cari nomor JK"><label>Min. penilaian: <b id="mv">1</b> <input type="range" id="mn" min="1" max="500" step="1" value="1"></label><span id="cnt"></span></div><div class="ov"><table id="tk"></table></div></div>
+<div class="c" style="margin-top:12px"><h2>Prioritas pembinaan</h2><p class="n">Rating rendah dengan kesalahan tinggi (dibantu tren per tulisan)</p><div class="ov"><table id="tp"></table></div></div></section>
+<section class="p" id="p3"><div class="g w"><div class="c"><h2>Rata-rata rating per korektor</h2><div class="b" style="height:460px"><canvas id="d1"></canvas></div></div>
+<div class="c"><h2>Komposisi rating per korektor</h2><p class="n">Persentase tiap skor</p><div class="b" style="height:460px"><canvas id="d2"></canvas></div></div></div>
+<div class="c" style="margin-top:12px"><h2>Profil korektor</h2><div class="ov" style="max-height:none"><table id="td"></table></div></div></section>
+<section class="p" id="p4"><div class="g w"><div class="c"><h2>Poin ulasan yang paling sering muncul</h2><p class="n">Jumlah penilaian yang memuat poin tersebut</p><div class="b" style="height:340px"><canvas id="e1"></canvas></div></div>
+<div class="c"><h2>Rata-rata rating saat poin muncul</h2><p class="n">Makin rendah, makin berat dampak poin itu</p><div class="b" style="height:340px"><canvas id="e2"></canvas></div></div></div>
+<div class="c" style="margin-top:12px"><h2>Model regresi (OLS, SE ter-cluster per juru ketik)</h2><p class="n">M1-M3: pengaruh pengalaman dan waktu. M4: rubrik ulasan (deskriptif saja).</p><div class="ov"><table id="tm"></table></div></div></section>
+<section class="p" id="p5"><div class="g w"><div class="c"><h2>Profil klaster</h2><div class="ov"><table id="tc"></table></div></div>
+<div class="c"><h2>Silhouette per jumlah klaster</h2><p class="n">Makin tinggi makin terpisah. Dipilih k = 2.</p><div class="b"><canvas id="f1"></canvas></div></div></div></section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const D=__DATA__,S=D.s,css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim(),f=(x,n=2)=>Number(x).toLocaleString("id-ID",{maximumFractionDigits:n});
+const CL=["#2563eb","#f59e0b","#10b981","#ec4899"];
+document.getElementById("hs").textContent=`Penilaian korektor atas juru ketik berita, ${D.rng[0]} s.d. ${D.rng[1]}`;
+document.getElementById("kpi").innerHTML=[["Penilaian",f(S.jumlah_penilaian,0),""],["Juru ketik",S.jumlah_juru_ketik,"190 dinilai"],["Korektor",S.jumlah_korektor,""],["Rata-rata rating",f(S.rata_rating),"skala 1-5"],["Rating ≥ 4",f(S.pct_rating_4plus,1)+"%",""],["Rating 5",f(S.pct_rating_5,1)+"%",""],["Memuat kesalahan",f(S.pct_ada_kesalahan,1)+"%","dari ulasan teks"]].map(a=>`<div class="c"><div class="l">${a[0]}</div><div class="v">${a[1]}</div><div class="s">${a[2]}</div></div>`).join("");
+const T=D.T,kr=[...D.kr].sort((a,b)=>a[0]-b[0]),krR=D.kr.filter(r=>r[1]>=100).sort((a,b)=>b[2]-a[2]),e=D.exp;
+document.getElementById("ins").innerHTML=[
+`Rating rata-rata naik dari ${f(T[0][2])} (${T[0][0]}) ke ${f(T[T.length-1][2])} (${T[T.length-1][0]}); ${f(S.pct_rating_4plus,1)}% penilaian bernilai 4 ke atas.`,
+`Pengalaman berpengaruh: juru ketik dengan ≤10 tulisan rata-rata ${f(e[0][2])}, yang di atas 500 tulisan ${f(e[4][2])}. Penilaian bermuatan kesalahan turun dari ${f(e[0][4],1)}% ke ${f(e[4][4],1)}%.`,
+`Korektor menjelaskan ${f(S.varians_dijelaskan_korektor_pct,1)}% variasi rating, juru ketik ${f(S.varians_dijelaskan_juru_ketik_pct,1)}%. Rata-rata antar korektor berkisar ${f(krR[krR.length-1][2])} sampai ${f(krR[0][2])} (korektor dengan ≥100 penilaian), jadi perlu kalibrasi penilaian.`,
+`Poin kesalahan paling sering: ${D.fl.filter(x=>x[0][0]=="-").slice(0,3).map(x=>x[0].slice(2)+" ("+x[1]+")").join(", ")}.`,
+`${D.P.length} juru ketik masuk prioritas pembinaan; klaster berkinerja rendah berisi ${D.C.find(c=>c[7]==2)[1]} juru ketik (rating ${f(D.C.find(c=>c[7]==2)[2])}).`].map(x=>`<li>${x}</li>`).join("");
+const tabs=["Ringkasan","Tren & Pola","Juru Ketik","Korektor","Kualitas & Model","Segmentasi"],built={};
+document.getElementById("nav").innerHTML=tabs.map((t,i)=>`<button data-i="${i}">${t}</button>`).join("");
+const base=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:css("--tx")}}},scales:{x:{ticks:{color:css("--mu")},grid:{color:css("--bd")}},y:{ticks:{color:css("--mu")},grid:{color:css("--bd")}}}});
+const mk=(id,cfg,fn)=>{const o=base();fn&&fn(o);cfg.options=o;new Chart(id,cfg)},ax=(o,k,x)=>o.scales[k]=Object.assign({ticks:{color:css("--mu")},grid:{color:css("--bd")}},x),ttl=t=>({display:true,text:t,color:css("--mu")});
+const B=(label,data,c,x)=>Object.assign({label,data,backgroundColor:c},x||{});
+const CH={
+0(){mk("a1",{data:{labels:T.map(r=>r[0]),datasets:[B("Jumlah penilaian",T.map(r=>r[1]),css("--ac")+"55",{type:"bar",yAxisID:"y1"}),{type:"line",label:"Rata-rata rating",data:T.map(r=>r[2]),borderColor:css("--a2"),backgroundColor:css("--a2"),tension:.3}]}},o=>{ax(o,"y",{min:3.5,max:5});ax(o,"y1",{position:"right",grid:{drawOnChartArea:false}});o.scales.x.ticks.maxRotation=60});
+ mk("a2",{type:"bar",data:{labels:[1,2,3,4,5].map(i=>"Rating "+i),datasets:[B("% penilaian",D.rd,CL[0])]}},o=>o.plugins.legend.display=false)},
+1(){mk("b1",{type:"line",data:{labels:T.map(r=>r[0]),datasets:[{label:"% rating 5",data:T.map(r=>r[3]),borderColor:CL[2],tension:.3},{label:"% memuat kesalahan",data:T.map(r=>r[4]),borderColor:css("--bad"),tension:.3}]}},o=>o.scales.x.ticks.maxRotation=60);
+ mk("b2",{data:{labels:e.map(r=>r[0]+" tulisan"),datasets:[B("Rata-rata rating",e.map(r=>r[2]),CL[0],{type:"bar"}),{type:"line",label:"% rating 5 (kanan)",data:e.map(r=>r[3]),borderColor:CL[1],yAxisID:"y1"}]}},o=>{ax(o,"y",{min:4});ax(o,"y1",{position:"right",grid:{drawOnChartArea:false}})});
+ mk("b3",{data:{labels:D.hr.map(r=>r[0]+":00"),datasets:[B("Jumlah penilaian",D.hr.map(r=>r[1]),css("--ac")+"66",{type:"bar"}),{type:"line",label:"Rating (kanan)",data:D.hr.map(r=>r[2]),borderColor:CL[1],yAxisID:"y1"}]}},o=>{ax(o,"y1",{position:"right",min:3.5,max:5,grid:{drawOnChartArea:false}})});
+ mk("b4",{data:{labels:["Sen","Sel","Rab","Kam","Jum","Sab","Min"],datasets:[B("Jumlah penilaian",D.dw.map(r=>r[1]),css("--ac")+"66",{type:"bar"}),{type:"line",label:"Rating (kanan)",data:D.dw.map(r=>r[2]),borderColor:CL[1],yAxisID:"y1"}]}},o=>{ax(o,"y1",{position:"right",min:4,max:5,grid:{drawOnChartArea:false}})})},
+2(){const ds=[0,1,-1].map(c=>({label:c<0?"Tanpa klaster":"Klaster "+c,data:D.K.filter(r=>r[8]==c).map(r=>({x:r[1],y:r[2],id:"JK "+r[0]})),backgroundColor:c<0?"#94a3b8":CL[c]}));
+ mk("c1",{type:"scatter",data:{datasets:ds}},o=>{o.plugins.tooltip={callbacks:{label:c=>`${c.raw.id}: ${f(c.raw.y)} (${c.raw.x} penilaian)`}};ax(o,"x",{type:"logarithmic",title:ttl("Jumlah penilaian (log)")});o.scales.y.title=ttl("Rata-rata rating")});
+ const bins=[0,3,3.5,4,4.25,4.5,4.75,5.01],lb=["<3","3-3,5","3,5-4","4-4,25","4,25-4,5","4,5-4,75","≥4,75"];
+ mk("c2",{type:"bar",data:{labels:lb,datasets:[B("Juru ketik",lb.map((_,i)=>D.K.filter(r=>r[2]>=bins[i]&&r[2]<bins[i+1]).length),CL[2])]}},o=>o.plugins.legend.display=false)},
+3(){mk("d1",{type:"bar",data:{labels:kr.map(r=>"Korektor "+r[0]+" (n="+r[1]+")"),datasets:[B("Rata-rata rating",kr.map(r=>r[2]),CL[0])]}},o=>{o.indexAxis="y";o.plugins.legend.display=false;o.scales.x.min=1;o.scales.x.max=5;o.scales.y.ticks.autoSkip=false});
+ const cs=["#dc2626","#f97316","#facc15","#38bdf8","#10b981"];
+ mk("d2",{type:"bar",data:{labels:kr.map(r=>"Korektor "+r[0]+" (n="+r[1]+")"),datasets:[1,2,3,4,5].map((v,i)=>B("Rating "+v,kr.map(r=>r[7+i]),cs[i]))}},o=>{o.indexAxis="y";o.scales.x.stacked=o.scales.y.stacked=true;o.scales.x.max=100;o.scales.y.ticks.autoSkip=false})},
+4(){const fl=D.fl.slice(0,12);
+ mk("e1",{type:"bar",data:{labels:fl.map(r=>r[0]),datasets:[B("Jumlah",fl.map(r=>r[1]),fl.map(r=>r[0][0]=="+"?CL[2]:css("--bad")))]}},o=>{o.indexAxis="y";o.plugins.legend.display=false});
+ mk("e2",{type:"bar",data:{labels:fl.map(r=>r[0]),datasets:[B("Rata-rata rating",fl.map(r=>r[2]),fl.map(r=>r[0][0]=="+"?CL[2]:css("--bad")))]}},o=>{o.indexAxis="y";o.plugins.legend.display=false;o.scales.x.min=2;o.scales.x.max=5})},
+5(){mk("f1",{type:"bar",data:{labels:D.S.map(r=>"k = "+r[0]),datasets:[B("Silhouette",D.S.map(r=>r[1]),D.S.map(r=>r[0]==2?CL[0]:css("--bd")))]}},o=>o.plugins.legend.display=false)}};
+function show(i){document.querySelectorAll(".p").forEach((p,j)=>p.classList.toggle("on",i==j));document.querySelectorAll("#nav button").forEach((b,j)=>b.classList.toggle("on",i==j));if(!built[i]){built[i]=1;CH[i]()}}
+document.getElementById("nav").onclick=ev=>{const b=ev.target.closest("button");b&&show(+b.dataset.i)};
+const tb=(id,h,rows)=>document.getElementById(id).innerHTML="<tr>"+h.map(x=>`<th>${x}</th>`).join("")+"</tr>"+rows.map(r=>"<tr>"+r.map(x=>`<td>${x}</td>`).join("")+"</tr>").join("");
+let sk=0,sd=1;
+function tk(){const q=document.getElementById("q").value.toLowerCase(),m=+document.getElementById("mn").value;document.getElementById("mv").textContent=m;
+ const rows=D.K.filter(r=>r[1]>=m&&("jk "+r[0]).includes(q)).sort((a,b)=>(a[sk]==b[sk]?a[0]-b[0]:(a[sk]>b[sk]?1:-1)*sd));document.getElementById("cnt").textContent=rows.length+" juru ketik";
+ tb("tk",["ID","Penilaian","Rating","% rating 5","% salah","% rilis","Korektor","Tren/tulisan","Klaster"],rows.map(r=>["JK "+r[0],r[1],f(r[2]),f(r[3],1),r[4]>5?`<span class="bad">${f(r[4],1)}</span>`:f(r[4],1),f(r[5],1),r[6],f(r[7],3),r[8]<0?"-":r[8]]));
+ document.querySelectorAll("#tk th").forEach((th,i)=>th.onclick=()=>{const k=[0,1,2,3,4,5,6,7,8][i];sd=k==sk?-sd:-1;sk=k;tk()})}
+document.getElementById("q").oninput=document.getElementById("mn").oninput=tk;tk();
+tb("tp",["ID","Penilaian","Rating","% salah","% rilis","Tren/tulisan"],D.P.map(r=>["JK "+r[0],r[1],f(r[2]),`<span class="bad">${f(r[3],1)}</span>`,f(r[4],1),f(r[5],3)]));
+tb("td",["Korektor","Penilaian","Rating","Std","% rating 5","% salah","% beri ulasan"],kr.map(r=>["Korektor "+r[0],r[1],f(r[2]),f(r[3]),f(r[4],1),f(r[5],2),f(r[6],1)]));
+const nm={log_exp:"Pengalaman (log tulisan)",t_bulan:"Waktu (per bulan)",skor_positif:"Skor poin positif",skor_negatif:"Skor poin negatif",ada_ulasan:"Ada ulasan"};
+tb("tm",["Model","Variabel","Koef.","SE","p","R²"],D.M.map(r=>[r[0],nm[r[1]]||r[1],f(r[2],3),f(r[3],3),r[4]<.001?"<0,001":f(r[4],3),f(r[5],3)]));
+tb("tc",["Klaster","Juru ketik","Rating","% rating 5","% salah","% rilis","Median volume"],D.C.map(r=>["Klaster "+r[0]+(r[7]==1?' <span class="ok">terbaik</span>':""),r[1],f(r[2]),f(r[3],1),f(r[4],1),f(r[5],1),f(r[6],0)]));
+show(0);
+</script></body></html>
